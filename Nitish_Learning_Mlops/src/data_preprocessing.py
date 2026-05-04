@@ -45,11 +45,11 @@ def lower_case(text):
 
 def removing_punctuations(text):
     ## Remove punctuations
-    text = re.sub('[%s]' % re.escape("""!"#$%&'()*+,،-./:;<=>؟?@[\]^_`{|}~"""), ' ', text)
+    text = re.sub(r'[%s]' % re.escape(r"""!"#$%&'()*+,،-./:;<=>؟?@[\]^_`{|}~"""), ' ', text)
     text = text.replace('؛',"", )
 
     ## remove extra whitespace
-    text = re.sub('\s+', ' ', text)
+    text = re.sub(r'\s+', ' ', text)
     text =  " ".join(text.split())
     return text.strip()
 
@@ -57,18 +57,20 @@ def removing_urls(text):
     url_pattern = re.compile(r'https?://\S+|www\.\S+')
     return url_pattern.sub(r'', text)
 
-def remove_small_sentences(df):
-    for i in range(len(df)):
-        if len(df.text.iloc[i].split()) < 3:
-            df.text.iloc[i] = np.nan
+def remove_small_sentences(df, column='content'):
+    """Remove sentences with less than 3 words"""
+    df = df.dropna(subset=[column])
+    df = df[df[column].apply(lambda x: len(str(x).split()) >= 3)]
+    return df
 
 def normalize_text(df):
-    df.content=df.content.apply(lambda content : lower_case(content))
-    df.content=df.content.apply(lambda content : remove_stop_words(content))
-    df.content=df.content.apply(lambda content : removing_numbers(content))
-    df.content=df.content.apply(lambda content : removing_punctuations(content))
-    df.content=df.content.apply(lambda content : removing_urls(content))
-    df.content=df.content.apply(lambda content : lemmatization(content))
+    df = remove_small_sentences(df)
+    df.content = df.content.apply(lambda content : lower_case(content))
+    df.content = df.content.apply(lambda content : remove_stop_words(content))
+    df.content = df.content.apply(lambda content : removing_numbers(content))
+    df.content = df.content.apply(lambda content : removing_punctuations(content))
+    df.content = df.content.apply(lambda content : removing_urls(content))
+    df.content = df.content.apply(lambda content : lemmatization(content))
     return df
 
 train_processed_data = normalize_text(train_data)
@@ -77,7 +79,7 @@ test_processed_data = normalize_text(test_data)
 # store the data inside data/processed
 data_path = os.path.join("data","processed")
 
-os.makedirs(data_path)
+os.makedirs(data_path, exist_ok=True)
 
-train_processed_data.to_csv(os.path.join(data_path,"train_processed.csv"))
-test_processed_data.to_csv(os.path.join(data_path,"test_processed.csv"))
+train_processed_data.to_csv(os.path.join(data_path,"train_processed.csv"), index=False)
+test_processed_data.to_csv(os.path.join(data_path,"test_processed.csv"), index=False)
