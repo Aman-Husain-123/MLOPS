@@ -1,7 +1,7 @@
-swiggy_recommendation
+
 ==============================
 
-This project will help recommend the top 3 food items on swiggy home page.
+This project will help recommend top 3 food items on swiggy home page.
 
 Project Organization
 ------------

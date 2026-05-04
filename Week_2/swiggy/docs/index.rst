@@ -1,9 +1,9 @@
-.. swiggy_recommendation documentation master file, created by
+.. swiggy documentation master file, created by
    sphinx-quickstart.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-swiggy_recommendation documentation!
+swiggy documentation!
 ==============================================
 
 Contents:
